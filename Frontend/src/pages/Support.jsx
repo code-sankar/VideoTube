@@ -26,11 +26,11 @@ function Support() {
                 <div className="h-full">
                   <h2 className="text-lg font-bold my-0">LinkedIn</h2>
                   <a
-                    href="https://www.linkedin.com/in/sameer0820/"
+                    href="www.linkedin.com/in/sankarjyoti-chetia-14b885208"
                     target="_blank"
                     className="text-blue-500 text-sm hover:text-blue-400 "
                   >
-                    /sankar111
+                    /Sankarjyoti Chetia
                   </a>
                 </div>
               </li>
@@ -41,7 +41,7 @@ function Support() {
                 <div className="h-full">
                   <h2 className="text-lg font-bold my-0">GitHub</h2>
                   <a
-                    href="https://github.com/Code-Sankar"
+                    href="https://github.com/code-sankar"
                     target="_blank"
                     className="text-blue-500 text-sm hover:text-blue-400 "
                   >
