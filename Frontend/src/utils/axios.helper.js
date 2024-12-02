@@ -3,7 +3,7 @@ import { toast } from "react-toastify";
 import { parseErrorMessage } from "./parseErrorMsg";
 
 const axiosInstance = axios.create({
-  baseURL: "https://video-tube-api-ashy.vercel.app/api/v1",
+  baseURL: "https://video-tube-api-beta.vercel.app/api/v1",
   withCredentials: true,
 });
 
