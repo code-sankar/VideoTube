@@ -19,7 +19,7 @@ app.use(cookieParser());
 //routes
 import userRouter from "./routes/user.routes.js";
 
-app.get("/", (req, res) => res.send("Backend of Streamify"));
+app.get("/", (req, res) => res.send("Videotube success"));
 
 //routes declaration
 app.use("/api/v1/users", userRouter);
