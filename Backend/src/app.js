@@ -8,7 +8,7 @@ const app = express();
 app.use(
     cors({
         origin: [
-            "https://video-tube-api-beta.vercel.app",
+            "https://video-tube-lake.vercel.app/",
             "http://localhost:5173",
         ],
         credentials: true,
