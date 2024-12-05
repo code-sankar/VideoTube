@@ -8,6 +8,7 @@ import {
 } from "../utils/cloudinary.js";
 import jwt from "jsonwebtoken";
 import mongoose from "mongoose";
+import fs from "fs";
 
 function unlinkPath(avatarLocalPath, coverImageLocalPath) {
   if (avatarLocalPath) fs.unlinkSync(avatarLocalPath);
