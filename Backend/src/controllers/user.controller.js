@@ -1,31 +1,36 @@
-import { User } from "../models/user.model.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/ApiError.js";
-import { ApiResponse } from "../utils/ApiResponse.js";
+import { User } from "../models/user.model.js";
 import {
-  uploadOnCloudinary,
   deleteFromCloudinary,
+  uploadOnCloudinary,
 } from "../utils/cloudinary.js";
+import { ApiResponse } from "../utils/ApiResponse.js";
+import fs from "fs";
 import jwt from "jsonwebtoken";
 import mongoose from "mongoose";
-import fs from "fs";
 
 function unlinkPath(avatarLocalPath, coverImageLocalPath) {
   if (avatarLocalPath) fs.unlinkSync(avatarLocalPath);
   if (coverImageLocalPath) fs.unlinkSync(coverImageLocalPath);
 }
 
-const generateAccessandRefreshTokens = async (userId) => {
+const generateAccessandRefreshTokens = async (userId, val = 0) => {
   try {
     const user = await User.findById(userId);
     const accessToken = user.generateAccessToken();
-    const refreshToken = user.generateRefreshToken();
-
-    user.refreshToken = refreshToken;
-    await user.save({ validateBeforeSave: false });
-    return { accessToken, refreshToken };
+    if (val === 0) {
+      const refreshToken = user.generateRefreshToken();
+      user.refreshToken = refreshToken;
+      await user.save({ validateBeforeSave: false });
+      return { accessToken, refreshToken };
+    }
+    return { accessToken };
   } catch (error) {
-    throw new ApiError(401, "Failed to generate access and refresh Token");
+    throw new ApiError(
+      500,
+      "Something went wrong while generating refresh and access token"
+    );
   }
 };
 
@@ -47,6 +52,7 @@ const registerUser = asyncHandler(async (req, res) => {
   if (
     [fullName, email, username, password].some((field) => field?.trim() === "")
   ) {
+    unlinkPath(avatarLocalPath, coverImageLocalPath);
     throw new ApiError(400, "All fields are required");
   }
 
@@ -152,30 +158,26 @@ const loginUser = asyncHandler(async (req, res) => {
     );
 });
 
-const logoutUser = asyncHandler(async (req, res) => {
-  try {
-    await User.findByIdAndUpdate(
-      req.user._id,
-      {
-        $unset: { refreshToken: 1 },
-      },
-      {
-        new: true,
-      }
-    );
-    const options = {
-      httpOnly: true,
-      secure: true,
-      sameSite: "None",
-    };
-    return res
-      .status(200)
-      .clearCookie("accessToken", options)
-      .clearCookie("refreshToken", options)
-      .json(new ApiResponse(200, {}, "User logged out"));
-  } catch (error) {
-    new ApiError(400, "Failed to logged out");
-  }
+const logOutUser = asyncHandler(async (req, res) => {
+  await User.findByIdAndUpdate(
+    req.user._id,
+    {
+      $unset: { refreshToken: 1 },
+    },
+    {
+      new: true,
+    }
+  );
+  const options = {
+    httpOnly: true,
+    secure: true,
+    sameSite: "None",
+  };
+  return res
+    .status(200)
+    .clearCookie("accessToken", options)
+    .clearCookie("refreshToken", options)
+    .json(new ApiResponse(200, {}, "User logged out"));
 });
 
 const refreshAccessToken = asyncHandler(async (req, res) => {
@@ -355,15 +357,16 @@ const updateUserCoverImage = asyncHandler(async (req, res) => {
 });
 
 const getUserChannelProfile = asyncHandler(async (req, res) => {
-  const username = req.prams;
+  const { username } = req.params;
+
   if (!username?.trim()) {
-    throw new ApiError(404, "Username not found to get channel Profile");
+    throw new ApiError(400, "username is missing");
   }
 
   const channel = await User.aggregate([
     {
       $match: {
-        username: username.toLowerCase(),
+        username: username?.toLowerCase(),
       },
     },
     {
@@ -388,13 +391,13 @@ const getUserChannelProfile = asyncHandler(async (req, res) => {
           $size: "$subscribers",
         },
         channelsSubscribedToCount: {
-          $size: "subscribedTo",
+          $size: "$subscribedTo",
         },
         isSubscribed: {
           $cond: {
             if: { $in: [req.user?._id, "$subscribers.subscriber"] },
-            then: "true",
-            else: "false",
+            then: true,
+            else: false,
           },
         },
       },
@@ -417,18 +420,19 @@ const getUserChannelProfile = asyncHandler(async (req, res) => {
   ]);
 
   if (!channel?.length) {
-    throw new ApiError(404, "Channel doesnot exists");
+    throw new ApiError(404, "channel does not exists");
   }
 
   return res
     .status(200)
     .json(
-      new ApiResponse(200, channel[0], "User Channel fetched successfully")
+      new ApiResponse(200, channel[0], "User channel fetched successfully")
     );
 });
 
-const watchHistory = asyncHandler(async (req, res) => {
+const getWatchHistory = asyncHandler(async (req, res) => {
   const { page = 1, limit = 10 } = req.query;
+
   const user = await User.aggregate([
     {
       $match: {
@@ -447,7 +451,7 @@ const watchHistory = asyncHandler(async (req, res) => {
           },
           {
             $lookup: {
-              from: "user",
+              from: "users",
               localField: "owner",
               foreignField: "_id",
               as: "owner",
@@ -465,7 +469,7 @@ const watchHistory = asyncHandler(async (req, res) => {
           {
             $addFields: {
               owner: {
-                $first: "owner",
+                $first: "$owner",
               },
             },
           },
@@ -491,7 +495,7 @@ const watchHistory = asyncHandler(async (req, res) => {
       new ApiResponse(
         200,
         user[0].watchHistory,
-        "Watched history fetched successfully"
+        "Watch history fetched successfully"
       )
     );
 });
@@ -499,7 +503,7 @@ const watchHistory = asyncHandler(async (req, res) => {
 export {
   registerUser,
   loginUser,
-  logoutUser,
+  logOutUser,
   refreshAccessToken,
   changeCurrentPassword,
   getCurrentUser,
@@ -507,5 +511,5 @@ export {
   updateUserAvatar,
   updateUserCoverImage,
   getUserChannelProfile,
-  watchHistory,
+  getWatchHistory,
 };
