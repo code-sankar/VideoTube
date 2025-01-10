@@ -48,10 +48,10 @@
 
 | Content           | Link                                                                             |
 | ----------------- | -------------------------------------------------------------------------------- |
-| Live Link         | [click here ](https://streamify-video-streaming.vercel.app)                      |
-| API Documentation | [click here ](https://documenter.getpostman.com/view/18766081/2sAXxP9CHB)        |
+| Live Link         | [click here ](https://video-tube-lake.vercel.app/)                               |
+| API Documentation | [click here ](https://documenter.getpostman.com/view/)                           |
 | Model             | [click here ](https://app.eraser.io/workspace/cATefMPkrAdzR9c6teox?origin=share) |
-| Figma Design      | [click here ](https://www.figma.com/design/shmxWL5FKRO5GNOPPopBg6/PLAY)          |
+| Figma Design      | [click here ](https://www.figma.com/design )                                     |
 
 ## 🏗️ Installation
 
