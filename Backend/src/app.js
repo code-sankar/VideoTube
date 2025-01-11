@@ -7,7 +7,10 @@ const app = express();
 
 app.use(
     cors({
-        origin: "*", // Allow all origins
+        origin: [
+            "https://video-tube-ficd.vercel.app",
+            "http://localhost:5173/",
+        ],
         credentials: true,
     })
 );
