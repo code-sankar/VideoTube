@@ -9,7 +9,7 @@ app.use(
     cors({
         origin: [
             "https://video-tube-ficd.vercel.app",
-            "http://localhost:5173/",
+            "http://localhost:5173",
         ],
         credentials: true,
     })

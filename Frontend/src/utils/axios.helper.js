@@ -3,10 +3,9 @@ import { toast } from "react-toastify";
 import { parseErrorMessage } from "./parseErrorMsg";
 
 const axiosInstance = axios.create({
-  baseURL: "https://video-tube-sable.vercel.app"  || "http://localhost:8000",
+  baseURL: "https://video-tube-sable.vercel.app/api/v1",
   withCredentials: true,
 });
-
 
 // Request interceptor to add the access token to headers
 axiosInstance.interceptors.request.use(
