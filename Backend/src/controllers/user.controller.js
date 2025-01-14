@@ -158,7 +158,7 @@ const loginUser = asyncHandler(async (req, res) => {
     );
 });
 
-const logOutUser = asyncHandler(async (req, res) => {
+const logoutUser = asyncHandler(async (req, res) => {
   await User.findByIdAndUpdate(
     req.user._id,
     {
@@ -503,7 +503,7 @@ const getWatchHistory = asyncHandler(async (req, res) => {
 export {
   registerUser,
   loginUser,
-  logOutUser,
+  logoutUser,
   refreshAccessToken,
   changeCurrentPassword,
   getCurrentUser,
