@@ -49,74 +49,80 @@ function Login() {
   };
 
   return (
-    <div className="h-screen w-full overflow-y-auto bg-[#121212] text-white">
-      <div className="mx-auto my-28 flex w-full max-w-sm flex-col px-4">
-        <div className="mx-auto inline-block">
+    <div className="min-h-screen w-full bg-[#121212] text-white flex items-center justify-center px-4">
+      <div className="w-full max-w-md flex flex-col">
+        <div className="flex justify-center mb-6">
           <Link to="/">
             <Logo />
           </Link>
         </div>
-        <div className="my-4 w-full text-center text-xl font-semibold">
+        <div className="text-center text-xl font-semibold mb-6">
           Log in to your account
         </div>
-        {error && <p className="text-red-600 mt-4 text-center">{error}</p>}
+        {error && <p className="text-red-600 text-center mb-4">{error}</p>}
         <form
           onSubmit={handleSubmit(login)}
-          className="mx-auto mt-2 flex w-full max-w-sm flex-col px-4"
+          className="bg-[#1e1e1e] p-6 rounded-lg shadow-lg"
         >
-          <Input
-            label="Email Address"
-            placeholder="Enter your email"
-            type="email"
-            className="px-2 rounded-lg"
-            required
-            {...register("email", {
-              required: true,
-              validate: {
-                matchPattern: (value) =>
-                  /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(value) ||
-                  "Email address must be a valid address",
-              },
-            })}
-          />
-          {errors.email && (
-            <p className="text-red-600 px-2 mt-1">{errors.email.message}</p>
-          )}
-          {errors.email?.type === "required" && (
-            <p className="text-red-600 px-2 mt-1">Email is required</p>
-          )}
-          <Input
-            label="Password"
-            className="px-2 rounded-lg"
-            className2="pt-5"
-            type="password"
-            placeholder="Enter your password"
-            required
-            {...register("password", {
-              required: true,
-            })}
-          />
-          {errors.password?.type === "required" && (
-            <p className="text-red-600 px-2 mt-1">Password is required</p>
-          )}
+          <div className="mb-4">
+            <Input
+              label="Email Address"
+              placeholder="Enter your email"
+              type="email"
+              className="px-3 py-2 w-full rounded-lg border border-gray-700 focus:border-blue-500 focus:outline-none"
+              required
+              {...register("email", {
+                required: true,
+                validate: {
+                  matchPattern: (value) =>
+                    /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(value) ||
+                    "Email address must be a valid address",
+                },
+              })}
+            />
+            {errors.email && (
+              <p className="text-red-600 text-sm mt-1">
+                {errors.email.message}
+              </p>
+            )}
+            {errors.email?.type === "required" && (
+              <p className="text-red-600 text-sm mt-1">Email is required</p>
+            )}
+          </div>
+          <div className="mb-4">
+            <Input
+              label="Password"
+              className="px-3 py-2 w-full rounded-lg border border-gray-700 focus:border-blue-500 focus:outline-none"
+              type="password"
+              placeholder="Enter your password"
+              required
+              {...register("password", {
+                required: true,
+              })}
+            />
+            {errors.password?.type === "required" && (
+              <p className="text-red-600 text-sm mt-1">Password is required</p>
+            )}
+          </div>
           <Button
             type="submit"
             disabled={loading}
-            className="mt-5 disabled:cursor-not-allowed py-2 rounded-lg"
-            bgColor={loading ? "bg-pink-800" : "bg-pink-600"}
+            className={`w-full py-3 rounded-lg text-white font-semibold ${
+              loading ? "bg-pink-800" : "bg-pink-600 hover:bg-pink-700"
+            } disabled:cursor-not-allowed`}
           >
             {loading ? <span>{icons.loading}</span> : "Sign in"}
           </Button>
         </form>
-        <h6 className="mx-auto mt-4">
+        <div className="text-center mt-4">
           Don't have an Account yet?{" "}
           <Link
-            to={"/signup"}
+            to="/signup"
             className="font-semibold text-blue-600 hover:text-blue-500"
           >
             Sign up now
           </Link>
-        </h6>
+        </div>
       </div>
     </div>
   );

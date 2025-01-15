@@ -21,13 +21,16 @@ function SignUp() {
 
   const signup = async (data) => {
     const formData = new FormData();
-    for (const key in data) {
-      formData.append(key, data[key]);
-    }
-    formData.append("avatar", data.avatar[0]);
-    if (data.coverImage) {
-      formData.append("coverImage", data.coverImage[0]);
-    }
+    Object.keys(data).forEach((key) => {
+      if (key === "avatar" || key === "coverImage") {
+        if (data[key]?.[0]) {
+          formData.append(key, data[key][0]);
+        }
+      } else {
+        formData.append(key, data[key]);
+      }
+    });
+
     setError("");
     setLoading(true);
     try {
@@ -37,173 +40,167 @@ function SignUp() {
         navigate("/login");
       }
     } catch (error) {
-      if (error.status === 409) {
-        setError("User with email or username already exists");
-      } else {
-        setError(error.message);
-      }
+      setError(
+        error?.status === 409
+          ? "User with email or username already exists"
+          : error.message
+      );
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="h-screen w-full overflow-y-auto bg-[#121212] text-white">
-      <div className="mx-auto my-10 flex w-full max-w-sm flex-col px-4">
-        <div className="mx-auto inline-block">
+    <div className="h-screen w-full overflow-y-auto bg-gray-900 text-white">
+      <div className="mx-auto my-10 flex w-full max-w-lg flex-col px-6">
+        <div className="mx-auto mb-4">
           <Link to="/">
             <Logo />
           </Link>
         </div>
-        <div className="my-4 w-full text-center text-xl font-semibold">
+        <div className="text-center text-2xl font-semibold">
           Create an Account
         </div>
-        <h6 className="mx-auto mb-1">
-          Already have an Account?{" "}
+        <p className="text-center text-sm text-gray-400 mt-2">
+          Already have an account?{" "}
           <Link
-            to={"/login"}
-            className="font-semibold text-blue-600 hover:text-blue-500"
+            to="/login"
+            className="font-semibold text-blue-600 hover:text-blue-400"
           >
             Sign in now
           </Link>
-        </h6>
-        {error && <p className="text-red-600 mt-8 text-center">{error}</p>}
+        </p>
+        {error && (
+          <p className="text-red-600 text-center mt-4" aria-live="assertive">
+            {error}
+          </p>
+        )}
         <form
           onSubmit={handleSubmit(signup)}
-          className="mx-auto mt-2 flex w-full max-w-sm flex-col px-4"
+          className="mt-6 flex flex-col space-y-4"
         >
           <Input
             label="Full Name"
-            required
-            className="px-2 rounded-lg"
             placeholder="Enter your full name"
+            className="rounded-lg"
+            required
             {...register("fullName", {
-              required: true,
+              required: "Full name is required",
               maxLength: {
                 value: 25,
                 message: "Full name cannot exceed 25 characters",
               },
             })}
           />
-          {errors.fullName?.type === "required" && (
-            <p className="text-red-600 px-2 mt-1">Full name is required</p>
-          )}
           {errors.fullName && (
-            <p className="text-red-600 px-2 mt-1">{errors.fullName.message}</p>
+            <p className="text-red-600 text-sm px-2">
+              {errors.fullName.message}
+            </p>
           )}
+
           <Input
             label="Username"
-            required
-            className="px-2 rounded-lg"
-            className2="pt-5"
             placeholder="Choose your username"
+            className="rounded-lg"
+            required
             {...register("username", {
-              required: true,
+              required: "Username is required",
               maxLength: {
                 value: 25,
-                message: "User name cannot exceed 25 characters",
+                message: "Username cannot exceed 25 characters",
               },
             })}
           />
-          {errors.username?.type === "required" && (
-            <p className="text-red-600 px-2 mt-1">Username is required</p>
-          )}
           {errors.username && (
-            <p className="text-red-600 px-2 mt-1">{errors.username.message}</p>
+            <p className="text-red-600 text-sm px-2">
+              {errors.username.message}
+            </p>
           )}
+
           <Input
             label="Email Address"
-            placeholder="Enter your email address"
             type="email"
-            className="px-2 rounded-lg"
-            className2="pt-5"
+            placeholder="Enter your email"
+            className="rounded-lg"
             required
             {...register("email", {
-              required: true,
-              validate: {
-                matchPattern: (value) =>
-                  /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(value) ||
-                  "Email address must be a valid address",
-              },
+              required: "Email address is required",
+              validate: (value) =>
+                /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(value) ||
+                "Invalid email format",
             })}
           />
           {errors.email && (
-            <p className="text-red-600 px-2 mt-1">{errors.email.message}</p>
+            <p className="text-red-600 text-sm px-2">{errors.email.message}</p>
           )}
-          {errors.email?.type === "required" && (
-            <p className="text-red-600 px-2 mt-1">Email is required</p>
-          )}
+
           <Input
             label="Password"
-            className="px-2 rounded-lg"
-            className2="pt-5"
             type="password"
             placeholder="Create your password"
+            className="rounded-lg"
             required
             {...register("password", {
-              required: true,
+              required: "Password is required",
             })}
           />
-          {errors.password?.type === "required" && (
-            <p className="text-red-600 px-2 mt-1">Password is required</p>
+          {errors.password && (
+            <p className="text-red-600 text-sm px-2">
+              {errors.password.message}
+            </p>
           )}
+
           <Input
             label="Avatar"
             type="file"
+            className="rounded-lg"
             required
-            className="px-2 rounded-lg"
-            className2="pt-5"
-            placeholder="Upload your avatar"
             {...register("avatar", {
-              required: true,
-              validate: (file) => {
-                const allowedExtensions = [
-                  "image/jpeg",
-                  "image/png",
-                  "image/jpg",
-                ];
-                const fileType = file[0]?.type;
-                return allowedExtensions.includes(fileType)
-                  ? true
-                  : "Invalid file type! Only .png .jpg and .jpeg files are accepted";
+              required: "Avatar is required",
+              validate: (files) => {
+                const file = files[0];
+                const allowedTypes = ["image/jpeg", "image/png", "image/jpg"];
+                return (
+                  (file && allowedTypes.includes(file.type)) ||
+                  "Invalid file type. Only JPG, PNG, and JPEG are allowed"
+                );
               },
             })}
           />
           {errors.avatar && (
-            <p className="text-red-600 px-2 mt-1">{errors.avatar.message}</p>
+            <p className="text-red-600 text-sm px-2">{errors.avatar.message}</p>
           )}
+
           <Input
             label="Cover Image"
             type="file"
-            className="px-2 rounded-lg"
-            className2="pt-5"
-            placeholder="Upload your Cover Image"
+            className="rounded-lg"
             {...register("coverImage", {
-              required: false,
-              validate: (file) => {
-                if (!file[0]) return true;
-                const allowedExtensions = [
-                  "image/jpeg",
-                  "image/png",
-                  "image/jpg",
-                ];
-                const fileType = file[0]?.type;
-                return allowedExtensions.includes(fileType)
-                  ? true
-                  : "Invalid file type! Only .png .jpg and .jpeg files are accepted";
+              validate: (files) => {
+                if (!files[0]) return true;
+                const file = files[0];
+                const allowedTypes = ["image/jpeg", "image/png", "image/jpg"];
+                return (
+                  allowedTypes.includes(file.type) ||
+                  "Invalid file type. Only JPG, PNG, and JPEG are allowed"
+                );
               },
             })}
           />
           {errors.coverImage && (
-            <p className="text-red-600 px-2 mt-1">
+            <p className="text-red-600 text-sm px-2">
               {errors.coverImage.message}
             </p>
           )}
+
           <Button
             type="submit"
             disabled={loading}
-            className="mt-5 disabled:cursor-not-allowed py-2 rounded-lg"
-            bgColor={loading ? "bg-pink-800" : "bg-pink-600"}
+            className={`w-full py-3 rounded-lg font-semibold ${
+              loading
+                ? "bg-pink-800 cursor-not-allowed"
+                : "bg-pink-600 hover:bg-pink-700"
+            }`}
           >
             {loading ? <span>{icons.loading}</span> : "Sign Up"}
           </Button>
