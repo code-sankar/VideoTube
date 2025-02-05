@@ -36,7 +36,7 @@ function SignUp() {
     try {
       const response = await axiosInstance.post("/users/register", formData);
       if (response?.data?.data) {
-        toast.success("Account created successfully 🥳");
+        toast.success("Account created successfully");
         navigate("/login");
       }
     } catch (error) {

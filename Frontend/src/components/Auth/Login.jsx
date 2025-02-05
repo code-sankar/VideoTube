@@ -30,7 +30,7 @@ function Login() {
       if (response?.data?.data) {
         dispatch(setUser(response.data.data.user));
         localStorage.setItem("accessToken", response.data.data.accessToken);
-        toast.success(response.data.message + "🤩");
+        toast.success(response.data.message);
         navigate("/");
       }
     } catch (error) {
