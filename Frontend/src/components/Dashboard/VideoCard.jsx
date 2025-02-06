@@ -1,14 +1,14 @@
 import React, { useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import formatDate from "../../utils/formatDate.js";
+import formatDate from "../../utils/formatDate";
 import { Link } from "react-router-dom";
-import ConfirmPopup from "../ConfirmPopup.jsx";
-import axiosInstance from "../../utils/axios.helper.js";
+import ConfirmPopup from "../ConfirmPopup";
+import axiosInstance from "../../utils/axios.helper";
 import { toast } from "react-toastify";
-import { updateVideoPublishStatus } from "../../store/dashboardSlice.js";
-import { deleteVideo } from "../../store/dashboardSlice.js";
+import { updateVideoPublishStatus } from "../../store/dashboardSlice";
+import { deleteVideo } from "../../store/dashboardSlice";
 import { MdDelete, MdEdit } from "react-icons/md";
-import VideoForm from "./VideoForm.jsx";
+import VideoForm from "./VideoForm";
 import { getChannelStats } from "../../hooks/getChannelStats.js";
 
 function VideoCard({ video }) {
