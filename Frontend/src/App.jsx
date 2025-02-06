@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
+import Navbar from "./components/Navbar/Navbar";
 import { Outlet } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import Navbar from "./components/Navbar/Navbar";
+import { useEffect, useState } from "react";
 import Sidebar from "./components/Sidebar";
 import { Bounce, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -14,56 +14,46 @@ function App() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    let intervalId;
-
-    const initializeApp = async () => {
-      try {
-        await healthCheck();
-        await getCurrentUser(dispatch);
+    healthCheck().then(() => {
+      getCurrentUser(dispatch).then(() => {
         setLoading(false);
-        // Set up periodic health check
-        intervalId = setInterval(() => {
-          healthCheck();
-        }, 5 * 60 * 1000);
-      } catch (error) {
-        console.error("Error during initialization:", error);
-        setLoading(false); // Allow app to render even if health check fails
-      }
-    };
-
-    initializeApp();
-
-    return () => {
-      if (intervalId) clearInterval(intervalId);
-    };
-  }, [dispatch]);
+      });
+    });
+    setInterval(() => {
+      healthCheck();
+    }, 5 * 60 * 1000);
+  }, []);
 
   if (loading) {
     return (
-      <div className="h-screen w-full bg-[#121212] text-white flex flex-col justify-center items-center">
-        <span className="animate-spin">{icons.loading}</span>
-        <h1 className="text-3xl font-semibold mt-4">Loading, please wait...</h1>
-        <h2 className="text-xl mt-2">
-          If this takes too long, try refreshing the page
-        </h2>
+      <div className="h-screen w-full  overflow-y-auto bg-[#121212] text-white">
+        <div className="flex flex-col items-center justify-center mt-64">
+          <span>{icons.loading}</span>
+          <h1 className="text-3xl text-center mt-8 font-semibold">
+            Please wait...
+          </h1>
+          <h1 className="text-xl text-center mt-4">
+            Refresh the page if it takes too long
+          </h1>
+        </div>
       </div>
     );
   }
-
   return (
-    <div className="h-screen w-screen bg-black text-white flex flex-col">
+    <div className="h-screen w-screen bg-black text-white flex flex-col bg-opacity-95">
       <Navbar />
-      <div className="flex flex-grow overflow-hidden">
-        {/* Sidebar */}
-        <Sidebar />
-
-        {/* Main Content */}
-        <main className="flex-grow overflow-y-auto h-full scrollbar-hide">
+      <div className="w-full h-full flex overflow-auto">
+        <div>
+          <Sidebar />
+        </div>
+        <main
+          className="overflow-y-auto h-full w-full scrollbar-hide"
+          id="scrollableDiv"
+        >
           <Outlet />
         </main>
       </div>
-
-      {/* Toast Notifications */}
+      <div id="popup-models" className="bg-pink-400 relative"></div>
       <ToastContainer
         position="top-right"
         autoClose={2000}
