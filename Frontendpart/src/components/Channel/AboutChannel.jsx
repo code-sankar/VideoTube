@@ -65,7 +65,7 @@ function AboutChannel() {
             href={`/channel/${username}`}
             className="text-blue-500 hover:text-blue-400 transition-colors"
           >
-            {`https://video-tube-3cch/channel/${username}`}
+            {`https://video-tube/channel/${username}`}
           </a>
         </p>
         <p className="ml-1 mb-[6px] flex items-center gap-2">
