@@ -16,7 +16,7 @@ import { FaBell, FaCheckCircle } from "react-icons/fa";
 import axiosInstance from "../../utils/axios.helper";
 import LoginPopup from "../Auth/LoginPopup.jsx";
 import GuestComponent from "../GuestPages/GuestComponent.jsx";
-import streamify_cover from "../../assets/Streamify_Cover.png";
+// import streamify_cover from "../../assets/Streamify_Cover.png";
 
 function Channel() {
   const dispatch = useDispatch();
@@ -79,7 +79,7 @@ function Channel() {
       <div className="relative min-h-[150px] w-full pt-[20%]">
         <div className="absolute inset-0 overflow-hidden">
           <img
-            src={profile?.coverImage || streamify_cover}
+            src={profile?.coverImage}
             alt="user"
             className="object-cover"
           />
